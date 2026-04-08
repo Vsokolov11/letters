@@ -15,6 +15,8 @@ add_executable(lttrs
     src/utils.c
     src/file_manager.c
     src/path_list.c
+    src/file_buffer.c
+    src/text_editor.c
 )
 
 target_link_libraries(lttrs ${CURSES_LIBRARIES})

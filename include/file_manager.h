@@ -1,6 +1,6 @@
 #ifndef FILE_MANAGER_H
 #define FILE_MANAGER_H
 
-int init_searchbox();
+const char* init_searchbox();
 
 #endif

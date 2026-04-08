@@ -2,7 +2,7 @@
 #include <dirent.h>
 
 #include "utils.h"
-#include "file_manager.h"
+#include "text_editor.h"
 
 int main()
 {
@@ -12,7 +12,7 @@ int main()
   create_colors();
   keypad(stdscr, TRUE);
 
-  init_searchbox();
+  open_file_editor();
 
   // getch();
   endwin();

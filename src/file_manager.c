@@ -7,7 +7,7 @@
 
 #include "utils.h"
 #include "path_list.h"
-// #include "text_editor.h"
+#include "text_editor.h"
 
 void handle_path (path_list *list, const char *path) {
   if (chdir(path) != 0) {
@@ -38,8 +38,7 @@ void handle_path (path_list *list, const char *path) {
   closedir(dirp);
 }
 
-int init_searchbox() {
-    char str[PATH_MAX];
+const char* init_searchbox() {
     int height = LINES / 2;
     int width = COLS / 2;
     int starty = (LINES - height) / 2;
@@ -100,14 +99,16 @@ int init_searchbox() {
         case KEY_DOWN:
           if (highlight < file_list.size - 1) highlight++;
           break;
-        case 10:
+        case 10: // Enter
           if (file_list.entries[highlight].is_dir) {
             handle_path(&file_list, file_list.entries[highlight].name);
             highlight = 0;
             scroll_offset = 0;
           } else {
-            // open_file_editor(file_list.entries[highlight].name);
-            // I may need to refresh something here .
+            char *selected = strdup(file_list.entries[highlight].name);
+            path_list_free(&file_list);
+            destroy_win(search_win);
+            return selected;
           }
 
           char cwd[PATH_MAX];
@@ -121,11 +122,9 @@ int init_searchbox() {
           exploring = false;
           break;
       }
-
-      // break;
     }
 
     path_list_free(&file_list);
-    delwin(search_win);
-    return 0;
+    destroy_win(search_win);
+    return NULL;
 }
