@@ -11,7 +11,7 @@
 
 void handle_path (path_list *list, const char *path) {
   if (chdir(path) != 0) {
-    print_bottom("folder cannot be accessed: %s", path);
+    print_bottom(3, "folder cannot be accessed: %s", path);
 
     return;
   }
@@ -48,6 +48,8 @@ const char* init_searchbox() {
 
     WINDOW *search_win = newwin(height, width, starty, startx);
     keypad(search_win, TRUE);
+    raw();
+    noecho();
 
     path_list file_list = {};
     handle_path(&file_list, ".");
@@ -61,6 +63,7 @@ const char* init_searchbox() {
     while (exploring) {
       wclear(search_win);
       box(search_win, 0, 0);
+      mvwprintw(search_win, 0, 2, " letters ");
       noecho();
 
       if (highlight >= scroll_offset + visible_rows) {
@@ -114,13 +117,14 @@ const char* init_searchbox() {
           char cwd[PATH_MAX];
 
           if (getcwd(cwd, sizeof(cwd)) != NULL) {
-            print_bottom("%s\n", cwd);
+            print_bottom(0, "%s\n", cwd);
           }
 
           break;
-        case 'q':
-          exploring = false;
-          break;
+          case 27:
+          case CTRL('q'): // make ctrl + q
+            exploring = false;
+            break;
       }
     }
 

@@ -48,6 +48,8 @@ int open_file_editor() {
   fb_line *current_line = buf->head;
   int ch;
 
+  fb_move_gap(current_line, 0);
+
   bool running = true;
   bool confirm_quit = false;
 
@@ -111,10 +113,10 @@ int open_file_editor() {
           // buf->is_dirty = true;
           break;
       case CTRL('o'):
-        fb_free(buf);
         const char *new_path = init_searchbox();
 
         if (new_path) {
+          fb_free(buf);
           buf = load_file_in_buffer(new_path);
           free(current_path);
           current_path = strdup(new_path);
@@ -123,20 +125,23 @@ int open_file_editor() {
           cursor_y = 0;
           scroll_offset = 0;
           current_line = buf->head;
+          fb_move_gap(current_line, 0);
         }
 
         full_redraw = true;
         break;
       case CTRL('s'):
-        if (save_file(buf, current_path) == 0)
+        if (save_file(buf, current_path) == 0) {
           buf->is_dirty = false;
+          print_bottom(1, "File saved successfully.");
+        }
         break;
       case CTRL('q'):
         if (!buf->is_dirty || confirm_quit) {
           running = false;
         } else {
           confirm_quit = true;
-          print_bottom("Unsaved changes! Press Ctrl+Q again to quit.");
+          print_bottom(3, "Unsaved changes! Press Ctrl+Q again to quit.");
         }
         break;
       default:
@@ -162,7 +167,7 @@ int open_file_editor() {
     refresh();
   }
 
-  fb_free(buf);
+  if (buf != NULL) fb_free(buf);
   return 0;
 }
 

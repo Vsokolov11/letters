@@ -9,6 +9,10 @@ int main()
   initscr();
   cbreak();
 
+  print_logo();
+
+  set_escdelay(25);
+
   create_colors();
   keypad(stdscr, TRUE);
 
